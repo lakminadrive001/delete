@@ -3,85 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Web Player</title>
+    <title>Neon YouTube Box</title>
     <style>
         body {
-            background-color: #050505;
+            background-color: #000;
             color: #fff;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 15px;
+            padding: 10px;
             margin: 0;
-            overflow-x: hidden;
         }
 
-        /* ප්‍රධාන Neon කොටුව */
-        .web-container {
+        /* Neon Border එක */
+        .neon-box {
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
+            height: 80vh; /* ෆෝන් එකේ උසින් 80% ක් */
             background: #111;
-            padding: 10px;
-            border-radius: 20px;
+            border: 3px solid #00ff88;
+            border-radius: 15px;
             box-shadow: 0 0 20px #00ff88;
-            border: 2px solid #00ff88;
             position: relative;
             overflow: hidden;
-            animation: glow 3s infinite;
+            margin-top: 10px;
         }
 
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 10px #00ff88; }
-            50% { box-shadow: 0 0 30px #00ff88; }
-        }
-
-        /* YouTube එක ඇතුළත් කරන කොටුව */
-        .iframe-wrapper {
-            width: 100%;
-            height: 600px; /* ෆෝන් එකේ දිගට සෙට් වෙන්න */
-            border-radius: 12px;
-            overflow: hidden;
-            background: #000;
-        }
-
-        iframe {
+        /* YouTube එක පේන කොටුව */
+        #player-frame {
             width: 100%;
             height: 100%;
             border: none;
         }
 
-        .header-text {
-            color: #00ff88;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-shadow: 0 0 5px #00ff88;
-            font-size: 18px;
+        .controls {
+            margin-top: 15px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            gap: 5px;
         }
 
-        .footer-note {
-            font-size: 11px;
-            color: #666;
-            margin-top: 10px;
-            text-align: center;
+        input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #00ff88;
+            background: #111;
+            color: #fff;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #00ff88;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div class="header-text">LIVE NEON PLAYER 🎧</div>
+    <h3 style="color: #00ff88; text-shadow: 0 0 10px #00ff88;">NEON LIVE PLAYER</h3>
 
-    <div class="web-container">
-        <div class="iframe-wrapper">
-            <iframe src="https://www.youtube.com" allowfullscreen></iframe>
-        </div>
+    <div class="controls">
+        <input type="text" id="search-term" placeholder="සින්දුවේ නම මෙතන ගහන්න...">
+        <button onclick="searchYoutube()">SEARCH</button>
     </div>
 
-    <div class="footer-note">
-        Background අහන්න නම් Chrome එකේ <b>Desktop Site</b> දාන්න.<br>
-        ඕනෑම සින්දුවක් මෙතනින්ම Search කරලා ප්ලේ කරන්න පුළුවන්.
+    <div class="neon-box">
+        <iframe id="player-frame" 
+                src="https://www.youtube.com/embed?listType=search&list=sinhala+songs" 
+                allowfullscreen>
+        </iframe>
     </div>
+
+    <p style="font-size: 11px; color: #666; margin-top: 10px;">
+        Background අහන්න Chrome එකේ <b>Desktop Site</b> දාන්න.
+    </p>
+
+    <script>
+        function searchYoutube() {
+            var term = document.getElementById('search-term').value;
+            if(term) {
+                var frame = document.getElementById('player-frame');
+                // සර්ච් කරන සින්දුව කොටුව ඇතුළට ලෝඩ් කරනවා
+                frame.src = "https://www.youtube.com/embed?listType=search&list=" + encodeURIComponent(term);
+            }
+        }
+    </script>
 
 </body>
 </html>
-
