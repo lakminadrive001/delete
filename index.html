@@ -1,32 +1,29 @@
 <!DOCTYPE html>
-<html lang="si">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Player</title>
+    <title>Background Player</title>
     <style>
-        body { background: #111; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
-        .video-box { width: 100%; max-width: 500px; margin: 0 auto; background: #000; border-radius: 10px; overflow: hidden; }
-        .list { max-width: 500px; margin: 20px auto; text-align: left; }
-        .song { background: #222; padding: 12px; margin: 5px 0; border-radius: 8px; cursor: pointer; font-size: 14px; }
-        .active { background: #1db954; color: black; font-weight: bold; }
-        iframe { width: 100%; aspect-ratio: 16 / 9; border: none; }
+        body { background: #000; color: #1db954; font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .song-btn { 
+            display: block; width: 80%; margin: 10px auto; padding: 15px; 
+            background: #222; color: #fff; border: 1px solid #1db954; border-radius: 10px;
+        }
+        #player { margin-top: 20px; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <h3>සින්දුවක් තෝරා ප්ලේ කරන්න 🎧</h3>
+    <h2>Background Music Player</h2>
+    <div id="player"></div>
 
-    <div class="video-box">
-        <div id="player"></div>
-    </div>
-
-    <div class="list">
-        <div class="song active" onclick="loadSong(0)">1. Piyamba Yanawa Ma Remix</div>
-        <div class="song" onclick="loadSong(1)">2. Yé ké yé ké Remix</div>
-        <div class="song" onclick="loadSong(2)">3. Made in Romania Remix</div>
-        <div class="song" onclick="loadSong(3)">4. Mai Maara Prasangaya Remix</div>
-        <div class="song" onclick="loadSong(4)">5. Tayna - Si Ai Remix</div>
+    <div style="margin-top: 20px;">
+        <button class="song-btn" onclick="play(0)">1. Piyamba Yanawa Ma Remix</button>
+        <button class="song-btn" onclick="play(1)">2. Yé ké yé ké Remix</button>
+        <button class="song-btn" onclick="play(2)">3. Made in Romania Remix</button>
+        <button class="song-btn" onclick="play(3)">4. Mai Maara Prasangaya Remix</button>
+        <button class="song-btn" onclick="play(4)">5. Tayna - Si Ai Remix</button>
     </div>
 
     <script>
@@ -40,18 +37,15 @@
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
+                height: '200', width: '300',
                 videoId: ids[0],
-                playerVars: { 'autoplay': 0, 'controls': 1 }
+                playerVars: { 'autoplay': 0, 'controls': 1, 'playsinline': 1 }
             });
         }
 
-        function loadSong(i) {
+        function play(i) {
             player.loadVideoById(ids[i]);
-            
-            // ලිස්ට් එකේ පාට වෙනස් කරන්න
-            var s = document.getElementsByClassName('song');
-            for(var x=0; x<s.length; x++) s[x].classList.remove('active');
-            s[i].classList.add('active');
+            player.playVideo();
         }
     </script>
 </body>
