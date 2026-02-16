@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon List Player</title>
+    <title>Neon Web Player</title>
     <style>
         body {
             background-color: #050505;
@@ -12,169 +12,75 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
             margin: 0;
+            overflow-x: hidden;
         }
 
-        .player-card {
+        /* ප්‍රධාන Neon කොටුව */
+        .web-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
             background: #111;
-            padding: 20px;
+            padding: 10px;
             border-radius: 20px;
-            box-shadow: 0 0 15px #00ff88;
-            border: 1px solid #00ff88;
-            text-align: center;
-            margin-bottom: 20px;
+            box-shadow: 0 0 20px #00ff88;
+            border: 2px solid #00ff88;
+            position: relative;
+            overflow: hidden;
+            animation: glow 3s infinite;
         }
 
-        #player {
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px #00ff88; }
+            50% { box-shadow: 0 0 30px #00ff88; }
+        }
+
+        /* YouTube එක ඇතුළත් කරන කොටුව */
+        .iframe-wrapper {
             width: 100%;
-            aspect-ratio: 16/9;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            height: 600px; /* ෆෝන් එකේ දිගට සෙට් වෙන්න */
+            border-radius: 12px;
+            overflow: hidden;
             background: #000;
         }
 
-        .input-area {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+        iframe {
             width: 100%;
-            max-width: 400px;
-        }
-
-        input {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            background: #1a1a1a;
-            color: #fff;
-            outline: none;
-        }
-
-        input:focus { border-color: #00ff88; }
-
-        .add-btn {
-            padding: 10px 20px;
-            background: #00ff88;
-            color: #000;
+            height: 100%;
             border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
         }
 
-        /* සින්දුව වැටෙන පොඩි කොටුව */
-        .song-card {
-            width: 100%;
-            max-width: 400px;
-            background: #1a1a1a;
+        .header-text {
+            color: #00ff88;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px #00ff88;
+            font-size: 18px;
+        }
+
+        .footer-note {
+            font-size: 11px;
+            color: #666;
             margin-top: 10px;
-            padding: 10px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            cursor: pointer;
-            border: 1px solid #333;
-            transition: 0.3s;
-        }
-
-        .song-card:hover {
-            border-color: #00ff88;
-            background: #222;
-        }
-
-        .thumb {
-            width: 80px;
-            height: 50px;
-            border-radius: 5px;
-            object-fit: cover;
-        }
-
-        .song-info {
-            text-align: left;
-            overflow: hidden;
-        }
-
-        .song-info div {
-            font-size: 14px;
-            font-weight: bold;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <div class="player-card">
-        <div id="player"></div>
-        <div style="font-size: 14px; color: #00ff88;" id="status">Play සින්දුවක් තෝරන්න</div>
+    <div class="header-text">LIVE NEON PLAYER 🎧</div>
+
+    <div class="web-container">
+        <div class="iframe-wrapper">
+            <iframe src="https://www.youtube.com/embed?listType=search&list=sinhala+remix+songs" allowfullscreen></iframe>
+        </div>
     </div>
 
-    <div class="input-area">
-        <input type="text" id="url-input" placeholder="YouTube Link එක මෙතනට දාන්න...">
-        <button class="add-btn" onclick="addNewSong()">ADD</button>
+    <div class="footer-note">
+        Background අහන්න නම් Chrome එකේ <b>Desktop Site</b> දාන්න.<br>
+        ඕනෑම සින්දුවක් මෙතනින්ම Search කරලා ප්ලේ කරන්න පුළුවන්.
     </div>
 
-    <div id="playlist-area" style="width: 100%; max-width: 400px;"></div>
-
-    <script>
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        var player;
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '100%',
-                width: '100%',
-                videoId: 'bgt02aUH5xs', // මුලින්ම තියෙන සින්දුව
-                playerVars: { 'playsinline': 1, 'controls': 1 }
-            });
-        }
-
-        function addNewSong() {
-            var url = document.getElementById('url-input').value;
-            var id = extractId(url);
-
-            if (id) {
-                var area = document.getElementById('playlist-area');
-                
-                // අලුත් සින්දු කොටුව (Card) හදනවා
-                var card = document.createElement('div');
-                card.className = 'song-card';
-                card.onclick = function() { 
-                    player.loadVideoById(id); 
-                    player.playVideo();
-                    document.getElementById('status').innerText = "දැන් ප්ලේ වෙනවා...";
-                };
-
-                card.innerHTML = `
-                    <img class="thumb" src="https://img.youtube.com/vi/${id}/mqdefault.jpg">
-                    <div class="song-info">
-                        <div>YouTube සින්දුව</div>
-                        <small style="color:#666">ටච් කරලා ප්ලේ කරන්න</small>
-                    </div>
-                `;
-
-                area.prepend(card); // අලුත්ම එක උඩට එනවා
-                document.getElementById('url-input').value = '';
-            } else {
-                alert("ලින්ක් එක වැරදියි මචං!");
-            }
-        }
-
-        function extractId(url) {
-            var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            var match = url.match(regExp);
-            return (match && match[2].length == 11) ? match[2] : null;
-        }
-    </script>
 </body>
 </html>
