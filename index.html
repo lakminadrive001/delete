@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Neon Player</title>
+    <title>Neon List Player</title>
     <style>
         body {
             background-color: #050505;
@@ -22,16 +22,10 @@
             background: #111;
             padding: 20px;
             border-radius: 20px;
-            box-shadow: 0 0 20px #00ff88;
-            border: 2px solid #00ff88;
+            box-shadow: 0 0 15px #00ff88;
+            border: 1px solid #00ff88;
             text-align: center;
             margin-bottom: 20px;
-            animation: glow 3s infinite;
-        }
-
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 10px #00ff88; }
-            50% { box-shadow: 0 0 30px #00ff88; }
         }
 
         #player {
@@ -39,50 +33,94 @@
             aspect-ratio: 16/9;
             border-radius: 10px;
             margin-bottom: 15px;
+            background: #000;
         }
 
-        .input-group {
-            margin: 15px 0;
+        .input-area {
             display: flex;
             gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
         }
 
-        input[type="text"] {
+        input {
             flex: 1;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #00ff88;
-            background: #000;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #1a1a1a;
             color: #fff;
+            outline: none;
         }
 
-        button {
-            padding: 10px 15px;
+        input:focus { border-color: #00ff88; }
+
+        .add-btn {
+            padding: 10px 20px;
             background: #00ff88;
             color: #000;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
         }
 
-        .song-title { color: #00ff88; font-weight: bold; margin-bottom: 10px; }
+        /* සින්දුව වැටෙන පොඩි කොටුව */
+        .song-card {
+            width: 100%;
+            max-width: 400px;
+            background: #1a1a1a;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            border: 1px solid #333;
+            transition: 0.3s;
+        }
+
+        .song-card:hover {
+            border-color: #00ff88;
+            background: #222;
+        }
+
+        .thumb {
+            width: 80px;
+            height: 50px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .song-info {
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .song-info div {
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 <body>
 
     <div class="player-card">
-        <div class="song-title" id="now-title">YouTube ලින්ක් එක පහලින් දාන්න</div>
-        
         <div id="player"></div>
-
-        <div class="input-group">
-            <input type="text" id="yt-url" placeholder="Paste YouTube Link Here...">
-            <button onclick="loadCustomSong()">PLAY</button>
-        </div>
-        
-        <p style="font-size: 11px; color: #666;">Screen Off කරලා අහන්න Chrome Desktop Site දාලා ප්ලේ කරන්න.</p>
+        <div style="font-size: 14px; color: #00ff88;" id="status">Play සින්දුවක් තෝරන්න</div>
     </div>
+
+    <div class="input-area">
+        <input type="text" id="url-input" placeholder="YouTube Link එක මෙතනට දාන්න...">
+        <button class="add-btn" onclick="addNewSong()">ADD</button>
+    </div>
+
+    <div id="playlist-area" style="width: 100%; max-width: 400px;"></div>
 
     <script>
         var tag = document.createElement('script');
@@ -94,34 +132,45 @@
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '200',
+                height: '100%',
                 width: '100%',
-                videoId: 'bgt02aUH5xs', // මුලින්ම ප්ලේ වෙන සින්දුව
+                videoId: 'bgt02aUH5xs', // මුලින්ම තියෙන සින්දුව
                 playerVars: { 'playsinline': 1, 'controls': 1 }
             });
         }
 
-        function loadCustomSong() {
-            var url = document.getElementById('yt-url').value;
-            var videoId = extractVideoId(url);
-            
-            if (videoId) {
-                player.loadVideoById(videoId);
-                player.playVideo();
-                document.getElementById('now-title').innerText = "Playing Custom Song...";
+        function addNewSong() {
+            var url = document.getElementById('url-input').value;
+            var id = extractId(url);
+
+            if (id) {
+                var area = document.getElementById('playlist-area');
                 
-                if ('mediaSession' in navigator) {
-                    navigator.mediaSession.metadata = new MediaMetadata({
-                        title: 'Custom YouTube Song',
-                        artist: 'Neon Player'
-                    });
-                }
+                // අලුත් සින්දු කොටුව (Card) හදනවා
+                var card = document.createElement('div');
+                card.className = 'song-card';
+                card.onclick = function() { 
+                    player.loadVideoById(id); 
+                    player.playVideo();
+                    document.getElementById('status').innerText = "දැන් ප්ලේ වෙනවා...";
+                };
+
+                card.innerHTML = `
+                    <img class="thumb" src="https://img.youtube.com/vi/${id}/mqdefault.jpg">
+                    <div class="song-info">
+                        <div>YouTube සින්දුව</div>
+                        <small style="color:#666">ටච් කරලා ප්ලේ කරන්න</small>
+                    </div>
+                `;
+
+                area.prepend(card); // අලුත්ම එක උඩට එනවා
+                document.getElementById('url-input').value = '';
             } else {
-                alert("වැරදි ලින්ක් එකක්! ආයේ චෙක් කරලා දාන්න.");
+                alert("ලින්ක් එක වැරදියි මචං!");
             }
         }
 
-        function extractVideoId(url) {
+        function extractId(url) {
             var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             var match = url.match(regExp);
             return (match && match[2].length == 11) ? match[2] : null;
