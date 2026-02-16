@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon BG Player</title>
+    <title>Ultimate Neon Player</title>
     <style>
         body {
             background-color: #050505;
@@ -16,10 +16,9 @@
             margin: 0;
         }
 
-        /* ප්ලේයර් එක වටේට දුවන ලයිට් එක */
         .player-card {
             width: 100%;
-            max-width: 350px;
+            max-width: 400px;
             background: #111;
             padding: 20px;
             border-radius: 20px;
@@ -27,76 +26,62 @@
             border: 2px solid #00ff88;
             text-align: center;
             margin-bottom: 20px;
+            animation: glow 3s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px #00ff88; }
+            50% { box-shadow: 0 0 30px #00ff88; }
         }
 
         #player {
             width: 100%;
+            aspect-ratio: 16/9;
             border-radius: 10px;
             margin-bottom: 15px;
-            border: 1px solid #333;
         }
 
-        .song-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #00ff88;
-            text-shadow: 0 0 10px #00ff88;
-            margin-bottom: 20px;
-        }
-
-        /* සින්දු ලිස්ට් එක */
-        .playlist {
-            width: 100%;
-            max-width: 350px;
-        }
-
-        .song-item {
-            background: #1a1a1a;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.3s;
-            border: 1px solid #333;
+        .input-group {
+            margin: 15px 0;
             display: flex;
-            align-items: center;
+            gap: 10px;
         }
 
-        .song-item:hover, .song-item.active {
-            border-color: #00ff88;
-            background: #111;
-            box-shadow: inset 0 0 10px #00ff88;
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #00ff88;
+            background: #000;
+            color: #fff;
         }
 
-        .song-item span {
-            color: #888;
-            margin-right: 15px;
+        button {
+            padding: 10px 15px;
+            background: #00ff88;
+            color: #000;
+            border: none;
+            border-radius: 5px;
             font-weight: bold;
+            cursor: pointer;
         }
 
-        /* Animated Glow */
-        @keyframes glow {
-            0% { box-shadow: 0 0 10px #00ff88; }
-            50% { box-shadow: 0 0 25px #00ff88; }
-            100% { box-shadow: 0 0 10px #00ff88; }
-        }
-        .player-card { animation: glow 3s infinite; }
+        .song-title { color: #00ff88; font-weight: bold; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
     <div class="player-card">
-        <div class="song-title" id="now-title">Music Player</div>
+        <div class="song-title" id="now-title">YouTube ලින්ක් එක පහලින් දාන්න</div>
+        
         <div id="player"></div>
-        <p style="font-size: 12px; color: #666;">Background අහන්න Desktop Site දාන්න</p>
-    </div>
 
-    <div class="playlist">
-        <div class="song-item" id="s0" onclick="playSong(0, 'Piyamba Yanawa Ma')"><span>01</span> Piyamba Yanawa Ma - Remix</div>
-        <div class="song-item" id="s1" onclick="playSong(1, 'Yé ké yé ké')"><span>02</span> Yé ké yé ké - Mohib Beats</div>
-        <div class="song-item" id="s2" onclick="playSong(2, 'Made in Romania')"><span>03</span> Made in Romania - Remix</div>
-        <div class="song-item" id="s3" onclick="playSong(3, 'Mai Maara Prasangaya')"><span>04</span> Mai Maara Prasangaya - Remix</div>
-        <div class="song-item" id="s4" onclick="playSong(4, 'Si Ai Remix')"><span>05</span> Tayna - Si Ai - Remix</div>
+        <div class="input-group">
+            <input type="text" id="yt-url" placeholder="Paste YouTube Link Here...">
+            <button onclick="loadCustomSong()">PLAY</button>
+        </div>
+        
+        <p style="font-size: 11px; color: #666;">Screen Off කරලා අහන්න Chrome Desktop Site දාලා ප්ලේ කරන්න.</p>
     </div>
 
     <script>
@@ -106,35 +91,40 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         var player;
-        var ids = ['bgt02aUH5xs', 'xkPNw-LXccs', 'yuiPG35iO-E', 'mBFIxp47P9M', 'FQbAz_tyb-k'];
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '180',
+                height: '200',
                 width: '100%',
-                videoId: ids[0],
+                videoId: 'bgt02aUH5xs', // මුලින්ම ප්ලේ වෙන සින්දුව
                 playerVars: { 'playsinline': 1, 'controls': 1 }
             });
         }
 
-        function playSong(idx, title) {
-            player.loadVideoById(ids[idx]);
-            player.playVideo();
-            document.getElementById('now-title').innerText = title;
+        function loadCustomSong() {
+            var url = document.getElementById('yt-url').value;
+            var videoId = extractVideoId(url);
             
-            // UI Update
-            var items = document.getElementsByClassName('song-item');
-            for(var i=0; i<items.length; i++) { items[i].classList.remove('active'); }
-            document.getElementById('s'+idx).classList.add('active');
-
-            // Background Metadata
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: title,
-                    artist: 'Neon Player',
-                    artwork: [{ src: 'https://img.youtube.com/vi/'+ids[idx]+'/0.jpg', sizes: '512x512', type: 'image/jpeg' }]
-                });
+            if (videoId) {
+                player.loadVideoById(videoId);
+                player.playVideo();
+                document.getElementById('now-title').innerText = "Playing Custom Song...";
+                
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                        title: 'Custom YouTube Song',
+                        artist: 'Neon Player'
+                    });
+                }
+            } else {
+                alert("වැරදි ලින්ක් එකක්! ආයේ චෙක් කරලා දාන්න.");
             }
+        }
+
+        function extractVideoId(url) {
+            var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            var match = url.match(regExp);
+            return (match && match[2].length == 11) ? match[2] : null;
         }
     </script>
 </body>
