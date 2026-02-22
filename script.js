@@ -1,6 +1,5 @@
-// ඔබේ Firebase Config එක මෙතනට දාන්න
 const firebaseConfig = {
-    apiKey: "AIzaSyAs-ExampleKey123456789", // මෙය උදාහරණයකි
+  apiKey: "AIzaSyAs-ExampleKey123456789", // මෙය උදාහරණයකි
   authDomain: "lakmina-chat.firebaseapp.com",
   projectId: "lakmina-chat",
   storageBucket: "lakmina-chat.appspot.com",
@@ -8,9 +7,10 @@ const firebaseConfig = {
   appId: "1:123456789012:web:abcdef123456"
 };
 
+// ඉතිරි කෝඩ් එක (මම කලින් දුන් script.js එකමයි)
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const storage = firebase.storage();
+// ... (කලින් දුන් අනෙකුත් කොටස්)
 
 let currentUser = "";
 
@@ -109,3 +109,4 @@ function login() {
     }
 
 }
+
