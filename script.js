@@ -1,11 +1,11 @@
 // ඔබේ Firebase Config එක මෙතනට දාන්න
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "chat-62f73",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyAs-ExampleKey123456789", // මෙය උදාහරණයකි
+  authDomain: "lakmina-chat.firebaseapp.com",
+  projectId: "lakmina-chat",
+  storageBucket: "lakmina-chat.appspot.com",
+  messagingSenderId: "123456789012",
+  appId: "1:123456789012:web:abcdef123456"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -107,4 +107,5 @@ function login() {
     } catch(e) {
         console.log("Firebase config එක තවම දාලා නැහැ.");
     }
+
 }
