@@ -3,74 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lakmina Chat Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <title>Lakmina Local Chat</title>
     <style>
-        body { 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #f3f3f4; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        body { background: #e5ddd5; display: flex; flex-direction: column; height: 100vh; }
         
-        .chat-header {
-            background: #0d0c22;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
-        }
+        /* ලොගින් පෝරමය */
+        #login-screen { position: fixed; top:0; left:0; width:100%; height:100%; background:#0d0c22; color:white; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:100; }
+        input[type="text"] { padding: 12px; width: 250px; border-radius: 8px; border: none; margin-bottom: 10px; }
+        button { padding: 10px 20px; background: #25d366; border: none; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-        .chat-wrapper {
-            max-width: 900px;
-            margin: 30px auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            overflow: hidden;
-            border: 2px solid #0d0c22;
-        }
+        /* චැට් එකේ පෙනුම */
+        header { background: #075e54; color: white; padding: 15px; text-align: center; font-size: 20px; }
+        #chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { background: white; padding: 10px; border-radius: 10px; max-width: 80%; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .my-msg { align-self: flex-end; background: #dcf8c6; }
+        .user-name { font-size: 10px; color: #075e54; font-weight: bold; display: block; }
 
-        /* මැසේජ් දාන්න බැරි නම් මේ උපදෙස් බලන්න */
-        .instructions {
-            background: #fff3cd;
-            color: #856404;
-            padding: 10px;
-            text-align: center;
-            font-size: 14px;
-            border-bottom: 1px solid #ffeeba;
-        }
-
-        iframe {
-            display: block;
-        }
+        /* මැසේජ් ටයිප් කරන තැන */
+        .input-area { background: #f0f0f0; padding: 10px; display: flex; gap: 10px; }
+        #messageInput { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #ddd; outline: none; }
     </style>
 </head>
 <body>
 
-    <div class="chat-header">🚀 Lakmina Live Chat</div>
-
-    <div class="chat-wrapper">
-        <div class="instructions">
-            ⚠️ <b>මැසේජ් දාන්න බැරි නම්:</b> පහළ ඇති "Name" කියන තැනට ඔබේ නම දී "Login" හෝ "OK" කරන්න.
-        </div>
-        
-        <iframe src="https://www3.cbox.ws/box/?boxid=954203&boxtag=v8p7m7" 
-                width="100%" 
-                height="550" 
-                allowtransparency="yes" 
-                allow="autoplay" 
-                frameborder="0" 
-                marginheight="0" 
-                marginwidth="0" 
-                scrolling="auto">
-        </iframe>
+    <div id="login-screen">
+        <h2>Lakmina Chat</h2>
+        <p style="margin-bottom: 15px;">ඔබේ නම ඇතුළත් කර ඇතුල් වන්න</p>
+        <input type="text" id="usernameInput" placeholder="ඔබේ නම...">
+        <button onclick="login()">ඇතුල් වන්න</button>
     </div>
 
-    <p style="text-align: center; color: #6e6d7a; margin-top: 20px;">
-        © 2026 Lakmina Digital | All Messages are Secured
-    </p>
+    <header>Lakmina Live Group</header>
+    <div id="chat-box"></div>
+
+    <div class="input-area">
+        <input type="text" id="messageInput" placeholder="පණිවිඩයක් ලියන්න...">
+        <button onclick="send()">Send</button>
+    </div>
+
+    <script>
+        let currentUser = "";
+
+        // ලොග් වීම
+        function login() {
+            const name = document.getElementById('usernameInput').value;
+            if(name.trim() !== "") {
+                currentUser = name;
+                document.getElementById('login-screen').style.display = 'none';
+                loadMessages();
+            } else {
+                alert("කරුණාකර නමක් ඇතුළත් කරන්න!");
+            }
+        }
+
+        // පණිවිඩ යැවීම
+        function send() {
+            const input = document.getElementById('messageInput');
+            const msgText = input.value;
+            if(msgText.trim() === "") return;
+
+            const chatData = JSON.parse(localStorage.getItem('lakmina_messages') || "[]");
+            const newMsg = { user: currentUser, text: msgText };
+            chatData.push(newMsg);
+            
+            localStorage.setItem('lakmina_messages', JSON.stringify(chatData));
+            input.value = "";
+            loadMessages();
+        }
+
+        // පණිවිඩ පෙන්වීම
+        function loadMessages() {
+            const chatBox = document.getElementById('chat-box');
+            const chatData = JSON.parse(localStorage.getItem('lakmina_messages') || "[]");
+            
+            chatBox.innerHTML = chatData.map(m => `
+                <div class="msg ${m.user === currentUser ? 'my-msg' : ''}">
+                    <span class="user-name">${m.user}</span>
+                    ${m.text}
+                </div>
+            `).join('');
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Enter key එකෙන් මැසේජ් යවන්න
+        document.getElementById("messageInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") send();
+        });
+    </script>
 
 </body>
 </html>
