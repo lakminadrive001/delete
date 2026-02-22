@@ -3,122 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Search & Save</title>
-    <style>
-        body { background: #050505; color: #fff; font-family: 'Segoe UI', sans-serif; padding: 15px; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        .neon-card { width: 100%; max-width: 400px; background: #111; padding: 15px; border-radius: 20px; box-shadow: 0 0 15px #0f8; border: 1px solid #0f8; margin-bottom: 20px; }
-        #player { width: 100%; border-radius: 10px; height: 200px; background: #000; }
-        .search-box { display: flex; gap: 5px; margin: 15px 0; width: 100%; max-width: 400px; }
-        input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #0f8; background: #000; color: #fff; outline: none; }
-        .btn { padding: 10px 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .add-btn { background: #0f8; color: #000; }
-        .playlist { width: 100%; max-width: 400px; }
-        .song-item { background: #1a1a1a; padding: 10px; margin-bottom: 8px; border-radius: 10px; display: flex; align-items: center; gap: 10px; border: 1px solid #333; cursor: pointer; }
-        .song-item.active { border-color: #0f8; background: #222; box-shadow: inset 0 0 10px #0f8; }
-        .thumb { width: 60px; height: 40px; border-radius: 5px; object-fit: cover; }
-        .info { flex: 1; font-size: 13px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        .remove-btn { color: #ff4444; font-size: 18px; padding: 0 10px; }
-    </style>
+    <title>Lakmina Real-Time Chat</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
 </head>
 <body>
 
-    <div class="neon-card">
-        <div id="player"></div>
-        <p id="now-playing" style="color: #0f8; font-size: 14px; margin-top: 10px;">සින්දුවක් තෝරන්න...</p>
+    <div id="login-screen" class="container">
+        <h2>Welcome to Chat</h2>
+        <input type="text" id="username" placeholder="ඔබේ නම ඇතුළත් කරන්න...">
+        <button onclick="login()">Log In</button>
+        <p id="error" style="color: red; display: none;">මෙම නම දැනටමත් භාවිතයේ ඇත!</p>
     </div>
 
-    <div class="search-box">
-        <input type="text" id="yt-link" placeholder="සින්දුවේ ලින්ක් එක මෙතනට දාන්න...">
-        <button class="btn add-btn" onclick="addSong()">ADD</button>
-    </div>
-
-    <div class="playlist" id="playlist-container">
+    <div id="chat-screen" class="container" style="display: none;">
+        <div class="chat-header">
+            <span id="display-name"></span>
+            <button onclick="startCall()">📞 Call</button>
         </div>
+        <div id="messages" class="messages-area"></div>
+        <div class="input-area">
+            <input type="file" id="fileInput" style="display: none;" onchange="uploadFile()">
+            <button onclick="document.getElementById('fileInput').click()">📷</button>
+            <input type="text" id="messageInput" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
 
-    <script>
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        var player;
-        var myPlaylist = JSON.parse(localStorage.getItem('myNeonPlaylist')) || [];
-        var currentIndex = 0;
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '100%', width: '100%',
-                videoId: myPlaylist.length > 0 ? myPlaylist[0].id : 'bgt02aUH5xs',
-                playerVars: { 'playsinline': 1, 'controls': 1 },
-                events: { 'onStateChange': onStateChange }
-            });
-            renderPlaylist();
-        }
-
-        function addSong() {
-            var url = document.getElementById('yt-link').value;
-            var id = extractId(url);
-            if (id) {
-                myPlaylist.push({ id: id, title: "සින්දුව " + (myPlaylist.length + 1) });
-                localStorage.setItem('myNeonPlaylist', JSON.stringify(myPlaylist));
-                renderPlaylist();
-                document.getElementById('yt-link').value = '';
-            } else { alert("වැරදි ලින්ක් එකක්!"); }
-        }
-
-        function extractId(url) {
-            var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|playlist?list=\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            var match = url.match(regExp);
-            return (match && match[2].length == 11) ? match[2] : null;
-        }
-
-        function renderPlaylist() {
-            var container = document.getElementById('playlist-container');
-            container.innerHTML = '';
-            myPlaylist.forEach((song, index) => {
-                var div = document.createElement('div');
-                div.className = 'song-item' + (index === currentIndex ? ' active' : '');
-                div.onclick = () => playThis(index);
-                div.innerHTML = `
-                    <img class="thumb" src="https://img.youtube.com/vi/${song.id}/mqdefault.jpg">
-                    <div class="info">${song.title}</div>
-                    <div class="remove-btn" onclick="removeSong(event, ${index})">×</div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function playThis(index) {
-            currentIndex = index;
-            player.loadVideoById(myPlaylist[index].id);
-            player.playVideo();
-            document.getElementById('now-playing').innerText = "Playing: " + myPlaylist[index].title;
-            renderPlaylist();
-            updateMediaSession(myPlaylist[index].title);
-        }
-
-        function onStateChange(event) {
-            if (event.data == YT.PlayerState.ENDED) {
-                currentIndex = (currentIndex + 1) % myPlaylist.length;
-                playThis(currentIndex);
-            }
-        }
-
-        function removeSong(e, index) {
-            e.stopPropagation();
-            myPlaylist.splice(index, 1);
-            localStorage.setItem('myNeonPlaylist', JSON.stringify(myPlaylist));
-            renderPlaylist();
-        }
-
-        function updateMediaSession(title) {
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: title, artist: 'Neon Playlist', album: 'Background Play'
-                });
-            }
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
-
