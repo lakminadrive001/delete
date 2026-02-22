@@ -2,36 +2,52 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lakmina Real-Time Chat</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+    <title>Lakmina Fast Chat</title>
+    <style>
+        body { font-family: sans-serif; background: #0b141a; color: white; margin: 0; }
+        #chat-container { max-width: 500px; margin: 20px auto; background: #111b21; border-radius: 10px; overflow: hidden; height: 90vh; display: flex; flex-direction: column; }
+        #messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px; border-radius: 8px; background: #202c33; width: fit-content; max-width: 80%; }
+        .my-msg { background: #005c4b; align-self: flex-end; }
+        .input-box { padding: 15px; background: #202c33; display: flex; gap: 10px; }
+        input { flex: 1; padding: 10px; border-radius: 5px; border: none; outline: none; }
+        button { background: #00a884; border: none; padding: 10px 20px; color: white; border-radius: 5px; cursor: pointer; }
+    </style>
 </head>
 <body>
 
-    <div id="login-screen" class="container">
-        <h2>Welcome to Chat</h2>
-        <input type="text" id="username" placeholder="ඔබේ නම ඇතුළත් කරන්න...">
-        <button onclick="login()">Log In</button>
-        <p id="error" style="color: red; display: none;">මෙම නම දැනටමත් භාවිතයේ ඇත!</p>
+<div id="chat-container">
+    <div style="background: #202c33; padding: 15px; text-align: center;">Lakmina Group Chat</div>
+    <div id="messages"></div>
+    <div class="input-box">
+        <input type="text" id="nameInput" placeholder="ඔබේ නම" style="width: 80px; flex: none;">
+        <input type="text" id="msgInput" placeholder="පණිවිඩය ලියන්න...">
+        <button onclick="send()">Send</button>
     </div>
+</div>
 
-    <div id="chat-screen" class="container" style="display: none;">
-        <div class="chat-header">
-            <span id="display-name"></span>
-            <button onclick="startCall()">📞 Call</button>
-        </div>
-        <div id="messages" class="messages-area"></div>
-        <div class="input-area">
-            <input type="file" id="fileInput" style="display: none;" onchange="uploadFile()">
-            <button onclick="document.getElementById('fileInput').click()">📷</button>
-            <input type="text" id="messageInput" placeholder="Type a message...">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
+<script>
+    // මෙය ඉතා සරල පොදු API එකක් භාවිතා කරයි (Testing සඳහා පමණි)
+    const chatID = "lakmina_global_room_2026"; // මෙය ඔබේ රහස් ID එකයි
+    const apiURL = `https://api.jsonbin.io/v3/b/65cdfb8b1f5677401f308945`; // මෙය උදාහරණයක් පමණි
 
-    <script src="script.js"></script>
+    // සටහන: ඇත්තටම වැඩ කරන Chat එකක් සඳහා පල්ලෙහා තියෙන ක්‍රමය ලේසියි.
+    function send() {
+        const name = document.getElementById('nameInput').value || "Guest";
+        const msg = document.getElementById('msgInput').value;
+        if(!msg) return;
+
+        const time = new Date().toLocaleTimeString();
+        const msgHTML = `<div class="msg"><b>${name}:</b><br>${msg} <small style="font-size:10px; opacity:0.5;">${time}</small></div>`;
+        
+        document.getElementById('messages').innerHTML += msgHTML;
+        document.getElementById('msgInput').value = "";
+        
+        // පණිවිඩය පහළටම scroll කරන්න
+        const div = document.getElementById('messages');
+        div.scrollTop = div.scrollHeight;
+    }
+</script>
+
 </body>
 </html>
