@@ -2,96 +2,55 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <title>Ad-Free YT Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YouTube Ad-Free</title>
     <style>
-        body {
-            background-color: #0f0f0f;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            padding: 50px;
-        }
-        .search-box {
-            margin-bottom: 30px;
-        }
-        input[type="text"] {
-            width: 60%;
-            padding: 12px;
-            border-radius: 25px;
-            border: 1px solid #333;
-            background: #222;
-            color: white;
-            outline: none;
-        }
-        button {
-            padding: 12px 25px;
-            border-radius: 25px;
-            border: none;
-            background-color: #0080ff; /* AdGuard Blue Color */
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover {
-            background-color: #005fbc;
-        }
-        .player-wrapper {
-            max-width: 900px;
-            margin: 0 auto;
-            border: 5px solid #222;
-            border-radius: 15px;
-            overflow: hidden;
-            background: #000;
-        }
-        iframe {
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
             width: 100%;
-            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            background-color: #000;
+        }
+        /* Iframe eka 100% full screen wenna */
+        #yt-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             border: none;
         }
-        .status {
-            color: #4CAF50;
-            margin-top: 10px;
-            font-size: 0.9em;
+        /* Loading screen ekak */
+        #loader {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: sans-serif;
         }
     </style>
 </head>
 <body>
 
-    <h2>AdGuard Style YT Player</h2>
-    <p>YouTube Link eka pahatha box ekata paste karanna.</p>
+    <div id="loader">YouTube Loading...</div>
 
-    <div class="search-box">
-        <input type="text" id="ytLink" placeholder="https://www.youtube.com/watch?v=...">
-        <button onclick="loadVideo()">Play Video</button>
-    </div>
-
-    <div class="player-wrapper" id="videoArea">
-        <div style="padding: 100px; color: #555;">Video ekak load karanna...</div>
-    </div>
-
-    <p class="status">🛡️ Ad-blocking mode active (using Privacy Enhanced Mode)</p>
+    <iframe 
+        id="yt-frame" 
+        src="https://www.youtube.com" 
+        allow="autoplay; encrypted-media; picture-in-picture" 
+        allowfullscreen
+        onload="document.getElementById('loader').style.display='none';">
+    </iframe>
 
     <script>
-        function loadVideo() {
-            const urlInput = document.getElementById('ytLink').value;
-            let videoId = "";
-
-            // Link eken ID eka ganna widiya
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = urlInput.match(regExp);
-
-            if (match && match[2].length == 11) {
-                videoId = match[2];
-                // youtube-nocookie kiyana link eka pavichchi kireema thulin ads godak block wei
-                const embedUrl = "https://www.youtube-nocookie.com/embed/" + videoId + "?rel=0&autoplay=1";
-                
-                document.getElementById('videoArea').innerHTML = 
-                    `<iframe src="${embedUrl}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-            } else {
-                alert("Karunaakara niwaradi YouTube link ekak danna.");
-            }
-        }
+        // Background play support ekata picture-in-picture enable kireema
+        const frame = document.getElementById('yt-frame');
+        
+        // Android WebView eke Background play wada karanna nam 
+        // oyaage Android Project eke settings wenas karanna ona.
     </script>
 
 </body>
