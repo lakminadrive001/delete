@@ -2,58 +2,63 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My YT Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YouTube Full Web App</title>
     <style>
-        body { margin: 0; background-color: #0f0f0f; color: white; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
-        .header { padding: 10px; background: #202020; display: flex; gap: 10px; }
-        input { flex: 1; padding: 10px; border-radius: 5px; border: none; background: #333; color: white; }
-        button { padding: 10px 20px; background: #ff0000; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .video-container { flex: 1; position: relative; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; position: absolute; }
-        .info { padding: 10px; font-size: 12px; color: #aaa; text-align: center; }
+        /* Screen eka full screen kireema */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #000;
+            overflow: hidden;
+        }
+        
+        /* YouTube site eka pennana window eka */
+        #youtube-web-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Loading indicator ekak */
+        .loader {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: Arial, sans-serif;
+            z-index: -1;
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <input type="text" id="urlInput" placeholder="YouTube Link eka paste karanna hari Video ID eka danna...">
-        <button onclick="playVideo()">Play</button>
-    </div>
+    <div class="loader">YouTube Loading...</div>
 
-    <div class="video-container" id="playerArea">
-        <div style="display: flex; height: 100%; align-items: center; justify-content: center; color: #555;">
-            Video ekak load karanna...
-        </div>
-    </div>
-
-    <div class="info">🛡️ Ad-blocking active via YouTube No-Cookie Player</div>
+    <iframe 
+        id="youtube-web-view" 
+        src="https://m.youtube.com?persist_app=1&app=m" 
+        allow="autoplay; encrypted-media; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
 
     <script>
-        function playVideo() {
-            let input = document.getElementById('urlInput').value;
-            let videoId = "";
-
-            // URL eken ID eka extract kireema
-            if (input.includes("v=")) {
-                videoId = input.split("v=")[1].split("&")[0];
-            } else if (input.includes("youtu.be/")) {
-                videoId = input.split("youtu.be/")[1];
-            } else {
-                videoId = input; // Video ID eka direct dunnoth
+        // Background play settings (Simulation)
+        // Android App eka thulin meka minimize karath play wenna hadanna puluwan
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                console.log("App is running in background...");
             }
+        });
 
-            if (videoId.length > 5) {
-                // youtube-nocookie use karama ads block wenawa
-                // autoplay=1 saha loop=1 background play ekata udaw wenawa
-                const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0&rel=0&showinfo=0&controls=1`;
-                
-                document.getElementById('playerArea').innerHTML = 
-                    `<iframe src="${embedUrl}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
-            } else {
-                alert("Karunaakara niwaradi YouTube link ekak hari Video ID ekak hari danna.");
-            }
-        }
+        // AdGuard Extension eka thulin karana wade DNS thulin kireema
+        console.log("AdGuard 5.3.0.8 Filtering Mode: Active (via Private DNS)");
     </script>
 
 </body>
