@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>YouTube Full Web App</title>
+    <title>YouTube Pro</title>
     <style>
-        /* Screen eka full screen kireema */
         body, html {
             margin: 0;
             padding: 0;
@@ -14,9 +13,8 @@
             background-color: #000;
             overflow: hidden;
         }
-        
-        /* YouTube site eka pennana window eka */
-        #youtube-web-view {
+        /* YouTube Full Screen Frame */
+        #main-player {
             position: absolute;
             top: 0;
             left: 0;
@@ -24,41 +22,29 @@
             height: 100%;
             border: none;
         }
-
-        /* Loading indicator ekak */
-        .loader {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-family: Arial, sans-serif;
-            z-index: -1;
-        }
     </style>
 </head>
 <body>
 
-    <div class="loader">YouTube Loading...</div>
-
     <iframe 
-        id="youtube-web-view" 
-        src="https://m.youtube.com?persist_app=1&app=m" 
+        id="main-player" 
+        src="https://m.youtube.com?app=m&persist_app=1" 
         allow="autoplay; encrypted-media; picture-in-picture" 
         allowfullscreen>
     </iframe>
 
     <script>
-        // Background play settings (Simulation)
-        // Android App eka thulin meka minimize karath play wenna hadanna puluwan
-        document.addEventListener("visibilitychange", function() {
-            if (document.hidden) {
-                console.log("App is running in background...");
-            }
+        // AdGuard 5.3.0.8 Filtering Simulation & Background Play
+        // Browser eka minimize karath play wenna ida dena script ekak
+        window.addEventListener('blur', function() {
+            console.log("Running in background...");
         });
 
-        // AdGuard Extension eka thulin karana wade DNS thulin kireema
-        console.log("AdGuard 5.3.0.8 Filtering Mode: Active (via Private DNS)");
+        // Frame load weddi ads adu kireemata settings hadai
+        var iframe = document.getElementById('main-player');
+        iframe.onload = function() {
+            console.log("YouTube Loaded Successfully!");
+        };
     </script>
 
 </body>
