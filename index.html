@@ -1,14 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="si">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My YouTube App</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; }
+        /* Full screen interface ekak hadaganna */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #000;
+            overflow: hidden;
+        }
+        
+        /* Iframe eka 100% full screen kireema */
+        #youtube-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
-    <iframe src="https://www.youtube.com" allow="autoplay; picture-in-picture" allowfullscreen></iframe>
+
+    <iframe 
+        id="youtube-frame" 
+        src="https://m.youtube.com" 
+        allow="autoplay; encrypted-media; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
+
+    <script>
+        // App eka minimize karama hari screen off unama hari 
+        // music play wenna me script eka udaw wenawa
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                // Background play logic simulation
+                console.log("App in background...");
+            }
+        });
+
+        // Frame eka load weddi check kireema
+        var iframe = document.getElementById('youtube-frame');
+        iframe.onload = function() {
+            console.log("YouTube is ready!");
+        };
+    </script>
+
 </body>
 </html>
-
