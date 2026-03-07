@@ -1,57 +1,13 @@
 <!DOCTYPE html>
-<html lang="si">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>YouTube Ad-Free</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            background-color: #000;
-        }
-        /* Iframe eka 100% full screen wenna */
-        #yt-frame {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        /* Loading screen ekak */
-        #loader {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-family: sans-serif;
-        }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
+        iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
-
-    <div id="loader">YouTube Loading...</div>
-
-    <iframe 
-        id="yt-frame" 
-        src="https://www.youtube.com" 
-        allow="autoplay; encrypted-media; picture-in-picture" 
-        allowfullscreen
-        onload="document.getElementById('loader').style.display='none';">
-    </iframe>
-
-    <script>
-        // Background play support ekata picture-in-picture enable kireema
-        const frame = document.getElementById('yt-frame');
-        
-        // Android WebView eke Background play wada karanna nam 
-        // oyaage Android Project eke settings wenas karanna ona.
-    </script>
-
+    <iframe src="https://www.youtube.com/embed?listType=user_uploads&list=YouTube" allow="autoplay; picture-in-picture" allowfullscreen></iframe>
 </body>
 </html>
